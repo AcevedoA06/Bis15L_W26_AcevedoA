@@ -67,6 +67,7 @@ names(msleep)
 ggplot(data = msleep ,
        mapping=aes(x=vore, y=bodywt))+
   geom_boxplot(mapping=aes(fill=bodywt))+
+  scale_y_log10()
 ```
 
 
