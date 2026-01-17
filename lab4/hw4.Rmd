@@ -47,8 +47,8 @@ names(msleep)
 ```
 
 ```{r}
-mean("sleep_cycle")
-na.translate=F
+mean("sleep_cycle", na.rm=TRUE)
+
 ```
 
 
@@ -66,18 +66,77 @@ names(msleep)
 ```{r}
 ggplot(data = msleep ,
        mapping=aes(x=vore, y=bodywt))+
-  geom_boxplot(mapping=aes(fill=bodywt))+
-  scale_y_log10()
+   geom_boxplot(mapping=aes(fill=vore))+
+  scale_x_discrete(na.translate=F)+
+   scale_y_log10()+
+  labs(title="Type of -Vore vs Body Weight of Mammal")
 ```
 
 
+
 **7. Is there a relationship between body weight and total sleep time? Add appropriate labels and a title to your plot.**
+```{r}
+names(msleep)
+```
+
+```{r}
+ggplot(data=msleep ,
+       mapping=aes(x=sleep_total, y=bodywt))+
+geom_point(mapping=aes(color=bodywt))+
+  geom_smooth(method=lm, na.rm=T)+
+  scale_y_log10()+
+  labs(title="Body Weight vs Total Sleep Time")  
+
+ #From this graph on #7 we can see that the more body weight a mammal, has the more they tend to sleep.
+```
+
+ 
+
 
 **8. Which vore type tends to sleep the most? Build a plot to support your answer.**
 
+```{r}
+names(msleep)
+```
+
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=vore, y=sleep_total))+
+  geom_boxplot(mapping=aes(fill=vore))+
+  scale_x_discrete(na.translate=F)+
+  labs(title="Type of -Vore vs Total Time Spent Sleeping")
+
+   #From the graph we can see that Insectivores tend to sleep the longest amounts of time
+```
+
 **9. Is there a relationship between brain weight and body weight? Build a plot to support your answer.**
 
+```{r}
+names(msleep)
+```
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=brainwt, y=bodywt))+
+  geom_point(mapping=aes(color=brainwt))+
+  geom_smooth(method=lm, se=T)+
+  scale_x_log10()+
+  scale_y_log10()+
+  labs(title="Brain Weight vs Body Weight of Mammals studied")
+
+  #Mammals with a heavier brain have a tendency to weight more
+```
+
+
 **10. Build one plot of your choice that provides additional insight into the msleep dataset. Be sure to include appropriate labels and a title.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=order, y=sleep_total))+
+  geom_boxplot(mapping=aes(fill=order))+
+  labs(title="Order of Mammals vs Total Time spent Sleeping")
+  
+```
+
+
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
