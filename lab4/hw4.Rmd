@@ -38,6 +38,7 @@ ggplot(data=msleep ,
        mapping=aes(x=vore))+
   geom_bar(mapping=aes(fill=vore))+
   scale_x_discrete(na.translate=F)
+  #The graph shows that Herbivores are the most represented in the data plot
 ```
 
 
@@ -47,7 +48,7 @@ names(msleep)
 ```
 
 ```{r}
-mean("sleep_cycle", na.rm=TRUE)
+mean(msleep$sleep_total, na.rm=T)
 
 ```
 
