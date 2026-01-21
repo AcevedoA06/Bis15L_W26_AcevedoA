@@ -61,12 +61,14 @@ homerange %>%
   filter(trophic.guild=="herbivore") %>% 
   filter(mean.hra.m2 >=1000000) %>% 
   slice_max(mean.hra.m2, n=10) %>% 
-  arrange(mean.hra.m2)
+  arrange(desc(mean.hra.m2))
 ```
 
 **6. Which two species have the largest and smallest homerange sizes?**
 ```{r}
-
+homerange %>% 
+  select(species, mean.hra.m2) %>% 
+  filter()
 ```
 
 ```{r}
@@ -75,7 +77,17 @@ homerange %>%
 
 **7. Which carnivorous mammals have the largest homeranges?**
 ```{r}
+names(homerange)
+```
 
+
+```{r}
+homerange %>% 
+  select(trophic.guild, common.name, class, mean.hra.m2) %>% 
+  filter(trophic.guild=="carnivore") %>% 
+  filter(class=="mammalia") %>% 
+  slice_max(mean.hra.m2, n=10)
+ #The Cheetah, Leopard and Caracal have the 3 largest home ranges out of all the carnivorous mammals in the data set
 ```
 
 **8. Is there a relationship between body mass and homerange size? Make a scatterplot to show this relationship. Be sure to include appropriate labels and a title.**
