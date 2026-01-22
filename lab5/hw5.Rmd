@@ -29,6 +29,7 @@ homerange <- read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
 **2. What is the structure of the `homerange` data? Does it have any NA's? Do a quick exploratory analysis of your choice below.**
 ```{r}
 glimpse(homerange)
+#Homerange has several NA's mostly under alternative mass references, where it can be pressumed the creator could not find more studies as well as preymass NA's that one can assume is for herbivores that don't have prey since they eat plants.
 ```
 
 ```{r}
@@ -48,7 +49,7 @@ ggplot(data=homerange,
 ggplot(homerange,
        mapping=aes(x=trophic.guild))+
   geom_bar(mapping=aes(fill=trophic.guild))
- #more Carnivores than Herbivores are in the data set
+ #More Carnivores than Herbivores are in the data set
 ```
 
 **5. Which herbivorous mammals have homeranges greater than 1,000,000 m²? Show only the common name, order, mean homerange size, and mean body mass. Arrange the data in descending order by homerange size and show only the top 10 species.**
@@ -119,14 +120,29 @@ names(homerange)
 ```
 
 ```{r}
-homerange %>% 
-  select(taxon, mean.hra.m2) %>%
-  filter(homerange, taxon=="mammals")
+ homerange %>% 
+  filter(taxon=="mammals"| taxon=="birds") %>% 
+ ggplot(mapping=aes(x=taxon, y=mean.hra.m2)) +
+  geom_boxplot(mapping=aes(fill=taxon))+
+  scale_y_log10()+
+  labs(title = "Mammal vs Birds Comparison of Average Home Range ")
+  
+ 
+ 
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
 ```{r}
+  # Question I am trying to answer is if there is a pattern of  freshwater aquatic animals will have smaller home ranges than their terrestrial counterparts, on the theory that they cannot cross landmasses to new waterways the way terrestrial animals can cross waterways to new landmasses
 
+ homerange %>% 
+   select(common.name, taxon, locomotion, mean.hra.m2) %>% 
+  filter(taxon!="marine fishes") %>% 
+  arrange(mean.hra.m2)
+  
+  
+  #The data set clearly shows that the average freshwater fishes homerange is most predominate at the bottom of the charts, meaning that they do  end to have smaller homeranges compared to animals that walk or fly. This can prove useful when thinking about freshwater fish conservation since they tend to have smaller homeranges and have less wiggle room for habitat destruction since they don't have much room to begin with.
+ 
 ```
 
 ## Knit and Upload
