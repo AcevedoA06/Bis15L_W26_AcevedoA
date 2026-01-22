@@ -38,9 +38,9 @@ names(homerange)
 **3. Which animal groups are represented in the data? Make a plot that shows the number in each class.**
 ```{r}
 ggplot(data=homerange, 
-       mapping = aes(x=class))+
-  geom_bar(mapping=aes(fill=class))
-  #Birds, Mammals, Reptiles and Ray Finned Fishes are included in the data set
+       mapping = aes(x=taxon))+
+  geom_bar(mapping=aes(fill=taxon))
+  #Birds, Mammals, Reptiles and Fish of various aquatic settings are included in the data
 ```
 
 **4. Are there more carnivores or herbivores represented in the data? Make a plot that shows the number in each trophic guild.**
@@ -68,12 +68,17 @@ homerange %>%
 ```{r}
 homerange %>% 
   select(species, mean.hra.m2) %>% 
-  filter()
+  slice_max(mean.hra.m2, n=1) 
+  
+ 
 ```
 
 ```{r}
-
+homerange %>% 
+ select(species, mean.hra.m2) %>% 
+ slice_min(mean.hra.m2, n=1)
 ```
+
 
 **7. Which carnivorous mammals have the largest homeranges?**
 ```{r}
@@ -83,21 +88,40 @@ names(homerange)
 
 ```{r}
 homerange %>% 
-  select(trophic.guild, common.name, class, mean.hra.m2) %>% 
+  select(trophic.guild, common.name, taxon, mean.hra.m2) %>% 
   filter(trophic.guild=="carnivore") %>% 
-  filter(class=="mammalia") %>% 
+  filter(taxon=="mammals") %>% 
   slice_max(mean.hra.m2, n=10)
- #The Cheetah, Leopard and Caracal have the 3 largest home ranges out of all the carnivorous mammals in the data set
+ 
 ```
 
 **8. Is there a relationship between body mass and homerange size? Make a scatterplot to show this relationship. Be sure to include appropriate labels and a title.**
 ```{r}
+names(homerange)
+```
 
+
+```{r}
+ ggplot(data=homerange,
+        mapping=aes(x=mean.mass.g, y=mean.hra.m2)) +
+  geom_point()+
+  geom_smooth(method=lm, se=T)+
+  scale_y_log10()+
+  scale_x_log10()+
+  labs(title="Average Body Mass of Species vs Average Homerange Size")
+
+ #Larger animals tend to have larger Homeranges
 ```
 
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
 ```{r}
+names(homerange)
+```
 
+```{r}
+homerange %>% 
+  select(taxon, mean.hra.m2) %>%
+  filter(homerange, taxon=="mammals")
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
