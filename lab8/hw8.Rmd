@@ -1,0 +1,141 @@
+---
+title: "Homework 8"
+author: "Alejandro Acevedo"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+    keep_md: yes
+---
+
+## Instructions
+Answer the following questions and/or complete the exercises in RMarkdown. Please embed all of your code and push the final work to your repository. Your report should be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run.  
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+#library("naniar"). #dont need to install naniar
+options(scipen = 999)
+```
+
+## About the Data
+For this assignment we are going to work with a data set from the [United Nations Food and Agriculture Organization](https://www.fao.org/fishery/en/collection/capture) on world fisheries. These data were downloaded and cleaned using the `fisheries_clean.Rmd` script.  
+
+Load the data `fisheries_clean.csv` as a new object titled `fisheries_clean`.
+```{r message=FALSE, warning=FALSE}
+fisheries_clean <- read_csv("data/fisheries_clean.csv")
+```
+
+1. Explore the data. What are the names of the variables, what are the dimensions, are there any NA's, what are the classes of the variables, etc.? You may use the functions that you prefer.
+```{r}
+glimpse(fisheries_clean)
+```
+
+2. Convert the following variables to factors: `period`, `continent`, `geo_region`, `country`, `scientific_name`, `common_name`, `taxonomic_code`, and `status`.
+```{r}
+fisheries_fctr <- fisheries_clean %>% 
+                  mutate(across(where(is.character), as.factor)) %>% 
+                  mutate(period=as.factor(period))
+fisheries_fctr
+```
+
+3. Are there any missing values in the data? If so, which variables contain missing values and how many are missing for each variable?
+```{r}
+#dont need to do #3, said in class
+```
+
+4. How many countries are represented in the data?
+```{r}
+fisheries_fctr %>% 
+ group_by(country) %>% 
+  distinct(country)
+# As we can see from what the tibble information as well as the groups counter, 249 countries were represented in the data.
+```
+
+5. The variables `common_name` and `taxonomic_code` both refer to species. How many unique species are represented in the data based on each of these variables? Are the numbers the same or different?
+```{r}
+fisheries_fctr %>% 
+  group_by(common_name) %>% 
+  distinct(common_name)
+
+#Their are 3,390 common names representing species in the data
+```
+
+```{r}
+fisheries_fctr %>% 
+  group_by(taxonomic_code) %>% 
+  distinct(taxonomic_code)
+# There are 3,722 taxonmic codes, meaning that their is  discrepancy of about 400 species between the common name filter and the taxonomic code filter.
+```
+
+
+6. In 2023, what were the top five countries that had the highest overall catch?
+```{r}
+fisheries_fctr %>% 
+  group_by(country) %>% 
+  summarise(max_catch=max(catch, na.rm=T)) %>% 
+  arrange(desc(max_catch)) %>% 
+  slice_max(max_catch, n=10)
+#The top 5 countries with the highest overall catches were Peru, Japan, Chile, China, and the former USSR, but only counting currently functioning countries, the Russian Federation 
+  
+```
+
+7. In 2023, what were the top 10 most caught species? To keep things simple, assume `common_name` is sufficient to identify species. What does `NEI` stand for in some of the common names? How might this be concerning from a fisheries management perspective?
+```{r}
+fisheries_fctr %>% 
+  group_by(common_name) %>% 
+  summarise(max_catch=max(catch, na.rm=T)) %>% 
+  arrange(desc(max_catch)) %>% 
+  slice_max(max_catch, n=10)
+  
+#The top 10 most caught species were Peruvian Anchovy's, Pacific Sardines, Chilean Jack Mackerel, Marine Fishes NEI, Alaska Pollock, Capelin, Pacific Chub  Mackerel, Freshwater Fish NEI, Atlantic Herring, and Marine Molluscs NEI. 
+
+#NEI stands for not elsewhere identified, which means that the people who obtained the data could not identify what exact species they caught and so they grouped these species based off habitat. This could be a problem to fisheries because it becomes harder to do sustainable harvesting practices without having an exact number of each species and instead keeping several lumped together unnaturally inflating numbers and not taking into account discrepencancies of total harvest of the different species all lumped into something like "Freshwater Fishes NEI". 
+```
+
+8. For the species that was caught the most above (not NEI), which country had the highest catch in 2023?
+```{r}
+fisheries_fctr %>% 
+  filter(period=="2023") %>%
+  filter(common_name=="Anchoveta(=Peruvian anchovy)") %>% 
+  group_by(country) %>% 
+  summarise(max_catch=max(catch, na.rm=T)) %>% 
+  arrange(desc(max_catch))
+
+ #The country with the highest catch of Peruvian Anchovies was Peru in 2023
+```
+
+9. How has fishing of this species changed over the last decade (2013-2023)? Create a  plot showing total catch by year for this species.
+```{r}
+fisheries_fctr %>% 
+  filter(common_name=="Anchoveta(=Peruvian anchovy)") %>%
+filter(period %in% c("2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023")) %>% 
+  ggplot(mapping=aes(x=period, y=catch, fill=period))+
+  geom_boxplot()+
+  labs(title = "Anchoveta Fishing from 2013-2023", 
+       x="year")
+
+#Anchoveta fishing is characterized by large changes year from year with the amount of fish harvested. One trend you can see is the harvest rate going down from 2013 up until 2018 where the total spikes up. From there the catch amounts lower. 
+```
+
+```{r}
+names(fisheries_fctr)
+```
+
+
+10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
+```{r}
+#The question I am going to ask is which georegions are the most fished
+
+fisheries_fctr %>%
+  group_by(geo_region) %>%
+  summarise(max_catch=max(catch, na.rm=T)) %>%  
+  arrange(desc(max_catch)) %>% 
+  slice_max(max_catch, n=10)
+
+ #From the table we can see that the most fished region in the world is South America. Whats interesting about this number is that it is most likely carried by the large amounts of Anchoveta fishing done in the Peru area.
+```
+
+## Knit and Upload
+Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
