@@ -33,78 +33,115 @@ sharks <-
 
 ## Questions
 1. Are there any "hotspots" for shark incidents in California? Show the top five counties with the most incidents.
+
 ```{r}
 sharks %>% 
-  group_by(county) %>% 
-  summarise(total_incidents=sum(incident_num, na.rm=T)) %>% 
-  slice_max(total_incidents, n=5)
-#Santa Barbara and San Diego counties are the 2 biggest hotspots for shark attack incidents
+  count(county) %>% 
+  slice_max(n, n=5) 
+#San Diego and Humboldt counties seem to be hotspots as they are the only 2 places that break the 20 incident count
 ```
+
 
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
 sharks %>% 
-  group_by(county) %>% 
-  summarise(total_incidents=sum(incident_num, na.rm=T)) %>% 
-  slice_max(total_incidents, n=5) %>% 
-  ggplot(mapping=aes(y=total_incidents, x=county, fill=county))+
-  geom_col()
+  count(county) %>% 
+  slice_max(n, n=5) %>% #assuming graph is wanted for only top 5 counties, if not then I wouldve done same but without slice_max
+  ggplot(mapping=aes(y=n, x=county, fill=county))+
+  geom_col()+
+  labs(title = "Total Number of incidents per County",
+       y="Number of Incidents",
+       x="County")+
+  coord_flip()
 ```
 
 3. Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?  
 ```{r}
 sharks %>% 
-  group_by(month) %>% 
-  summarize(incidents_by_month=sum(incident_num, na.rm=T))
+  count(month)
 ```
 
 ```{r}
-#sharks %>% 
-  #mutate(!month, as.factor)
+sharks %>% 
+  mutate(month=as.factor(month)) %>% 
+  count(month) %>%
+  ggplot(aes(y=n, x=month, fill=month))+
+  geom_col()+
+  labs(title="Number of Incidents Every Month",
+       x="Month by its Date Number",
+       y="Number of Incidents")
+```
+
+4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
+```{r}
+sharks %>% 
+  count(time) %>% 
+  slice_max(n, n=10)
 ```
 
 
 ```{r}
 sharks %>% 
-  group_by(month) %>% 
-  summarize(incidents_by_month=sum(incident_num, na.rm=T)) %>% 
-  ggplot(aes(y=incidents_by_month, x=month, fill=month))+
+  count(time) %>%
+   slice_max(n, n=10) %>% #Too many points, so reduced to most relevant
+  ggplot(aes(x=time, y=n, fill = time))+
   geom_col()
+#11:00 am stands out as the time period with a noticeable spike in Shark attacks 
 ```
 
-4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
-```{r}
-
-```
 
 5. How do the number and types of injuries compare by county? Make a table that shows the number of injury types by county. Which county has the highest number incidents? (hint: your table should be in wide format)
-```{r}
 
+```{r}
+sharks %>% 
+  count(county, injury) %>% 
+  pivot_wider(names_from = "injury",
+              values_from = "n")
+#Humboldt County has the highest number of incidents with 20 recorded incidents.
 ```
+
 
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
 ```{r}
-
+sharks %>% 
+  ggplot(aes(x=county, y=injury, fill = injury))+
+  geom_col(position = "dodge")+
+  coord_flip()+
+  labs(title = "Total Number of Incidents by County")
 ```
 
 7. In the data, `mode` refers to a type of activity. Which activity is associated with the highest number of incidents?
 ```{r}
-
+sharks %>% 
+  count(mode)
+#Surfing/Boarding is associated with the highest amount of incidents
 ```
 
 8. Make a plot that compares the number of incidents by activity.
 ```{r}
-
+sharks %>%
+  ggplot(aes(x=mode, fill = mode))+
+  geom_bar(position = "dodge")+
+  coord_flip()+
+  labs(title = "Number of Incidents by Activity",
+       x="Activity")
 ```
 
 9. Which shark species is involved in the highest number of incidents?  
 ```{r}
-
+sharks %>% 
+  count(species)
+#Great White Sharks make up the overwhelming majority of incidents
 ```
 
 10. Are all incidents involving Great White's fatal? Make a plot that shows the number and types of incidents for Great White's only.  
 ```{r}
-
+sharks %>% 
+  filter(species=="White") %>% 
+  ggplot(aes(x=species, fill = injury))+
+  geom_bar(position = "dodge")+
+  labs(title = "Number of Each Type of Incident for Great White Sharks",
+       x="Injury Type")
 ```
 
 ## Knit and Upload
