@@ -158,7 +158,6 @@ names(penguins)
 penguins %>% 
   ggplot(aes(x=island, fill=species))+
   geom_bar(position = "dodge")+
-  theme(axis.text.x = element_text(angle=33, hjust = 1))+
   labs(title="Observations by Species",
        x="Species",
        y=NULL)
