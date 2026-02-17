@@ -142,6 +142,7 @@ income_cat200 <- gap %>%
                                                             "low_middle", 
                                                             "upper_middle", 
                                                             "high")))
+income_cat200
 ```
 
 ## Practice
