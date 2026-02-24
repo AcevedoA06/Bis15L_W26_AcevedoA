@@ -133,6 +133,7 @@ life_history_no_nas %>%
   miss_var_summary(order=T)
 ```
 
+
 `naniar` has nice replace functions which will allow you to precisely control which values you want replaced with NA's in each variable. This is a nice alternative to `mutate()` and `na_if()`.  
 ```{r}
 life_history %>% #going back to the original data

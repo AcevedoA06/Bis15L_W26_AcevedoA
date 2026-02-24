@@ -34,28 +34,41 @@ summary(amniota)
 
 2. Make any necessary replacements in the data such that all NA's appear as "NA". 
 ```{r}
-amniota %>% 
-  replace_with_na(replace = list(female_maturity_d = -999, 
-                                litter_or_clutch_size_n= -999, 
-                                 litters_or_clutches_per_y= -999, 
-                                 adult_body_mass_g= -999, 
-                                 maximum_longevity_y= -999, 
-                                 gestation_d= -999, 
-                                 gestation= -999, 
-                                 mass= -999)) %>%  
-miss_var_summary()
+amniota_sorted<- read_csv("data/amniota.csv", na="-999") %>% 
+                clean_names()
 ```
 
 3. How many total NA's are in the data set? Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amniota` data.
 ```{r}
-
+miss_var_summary(amniota_sorted) %>% 
+  mutate(total_nas=sum(n_miss))
+#There are a total of 528204 NA's in the data
 ```
 
 4. Double check your replacement using `summary`. Do you see any other potential issues? If so, fix them.
+```{r}
+amniota_sorted <- amniota_sorted %>% 
+  mutate(female_maturity_d=na_if(female_maturity_d, -30258.71100))
+#female_maturity_d had 4 instances of -30258.71100 being used, ruining other calculation with that vector
+```
+
 
 5. Use `naniar` to visualize the number of NA's in each variable. Which variables have the most NA's?
+```{r}
+amniota_sorted %>% 
+  gg_miss_var()
+#Subspecies, female_body_mass_at_maturity_g, and female_svl_at_maturity_cm are three of the largest missing variables with others like male_svl_cm and no_sex_maturity_d not falling far behind
+```
 
 6. Calculate the number of NAs in the `egg_mass_g` column sorted by taxonomic class; i.e. how many NA's are present in the `egg_mass_g` column in birds, mammals, and reptiles? Does this results make sense biologically? How do these results affect your interpretation of NA's?
+```{r}
+amniota_sorted %>% 
+  group_by(class) %>%
+  miss_var_summary() %>% 
+  filter(variable=="egg_mass_g")
+ #These result do make sense biologically but not logistically. It makes perfect sense that 100% of mammalia egg_mass data is missing since mammals don't lay eggs. What makes this information not make sense logistically for me is that the authors did not include 92% of reptile egg_mass data or half of Aves egg_mass even though these 2 classes do lay eggs. I would keep the large amounts of NA's in mind when wanting to make any sort of analysis involving egg_mass since the majority of the data set doesn't have information for the species represented. 
+```
+
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean! 
