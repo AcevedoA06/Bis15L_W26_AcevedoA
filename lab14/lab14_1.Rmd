@@ -84,7 +84,7 @@ bbox <- make_bbox(long, lat, f=0.03) #f= creates buffer
 
 Let's get a base map for our bounding box area. There are several different map [styles](https://docs.stadiamaps.com/themes/)
 ```{r}
-map1 <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom=7) #zoom used to create more or less m deatils
+map1 <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom=7) #zoom used to create more or less  details
 ```
 
 Have a look at the map.  
@@ -160,6 +160,7 @@ grizzly %>%
   select(latitude, longitude) %>% 
   summary()
 ```
+
 ```{r}
 griz_lat <- c(55.02, 70.37)
 griz_lon <- c(-131.3, -166.2)
