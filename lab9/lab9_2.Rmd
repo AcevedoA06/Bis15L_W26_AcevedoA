@@ -92,7 +92,7 @@ heartrate2 %>%
 1. Re-examine `heartrate2`. Use `separate()` for the sexes, `pivot_longer()` to tidy, and `arrange()` to organize by patient and drug. Store this as a new object `heartrate3`.  
 ```{r}
   heartrate3 <- heartrate2 %>% 
-  seperate(patient, into)
+  #separate(patient, into = )
 ```
 
 2. `unite()` is the opposite of separate(). Its syntax is straightforward. You only need to give a new column name and then list the columns to combine with a separation character.  Give it a try below by recombining patient and sex from `heartrate3`.  
