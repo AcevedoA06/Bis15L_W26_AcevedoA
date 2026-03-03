@@ -168,52 +168,41 @@ wolves %>%
   facet_wrap(~pop)
 ```
 
-```{r, eval=F, echo=T}
+```{r}
 ui <- dashboardPage(
-    
   
-  dashboardHeader(title = "Sex Composition by Wolf Population"),
- 
-  dashboardSidebar(disable = T),
+  dashboardHeader(title="Sex Composition by Wolf Population"),
+  
+  dashboardSidebar(disable=T),
   
   dashboardBody(
-      selectInput("x",
+    
+    selectInput("x",
               "Select Population",
-              choices = sort(unique(wolves$pop)),
-              selected = "AK.PEN"),
-      
-      plotOutput("plot", width = "500px", height = "400px")
-      )
+              choices=sort(unique(wolves$pop)), #no need to type every pop
+              selected="AK.PEN"),
+    
+    plotOutput("plot", width="500px", height="400px")
+    
+  )
+  
 )
-  
-  server <- function(input, output, session) {
-    output$plot <- renderPlot({
-    
-    wolves %>% 
-      filter(pop == input$x) %>% 
-      ggplot(aes(x=sex, fill=sex))+
-      geom_density(fill="steelblue",
-                   alpha=0.6)+
-      theme_minimal()
-  })
-  
-}
 
-```
-
-```{r}
 server <- function(input, output, session) {
-    output$plot <- renderPlot({
+  
+  output$plot <- renderPlot({
     
     wolves %>% 
       filter(pop == input$x) %>% 
       ggplot(aes(x=sex, fill=sex))+
-      geom_density(fill="steelblue",
-                   alpha=0.6)+
+      geom_bar(alpha=0.8, color="black")+
+      labs(x="Sex", y=NULL)+
       theme_minimal()
   })
   
 }
+
+shinyApp(ui, server)
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)
